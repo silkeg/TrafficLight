@@ -65,7 +65,7 @@ export function FurtherOptimizations() {
             </span>
           </ListItemIcon>
           <ListItemText>
-            Anzeige einbauen wielviel Zeit bis zum nächsten Grün noch ist
+            Anzeige einbauen vielviel Zeit bis zum nächsten Grün
           </ListItemText>
         </ListItem>
       </List>
