@@ -13,7 +13,7 @@ export function Task() {
       <Typography variant="h5" component="h2" marginBlock="2rem">
         Aufgabe: Verkehrsampel
         <span role="img" aria-label="Image Pedestrian">
-          🚶
+          🚦
         </span>
       </Typography>
       <Typography variant="h6" component="h3">

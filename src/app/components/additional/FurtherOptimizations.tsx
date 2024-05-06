@@ -12,6 +12,9 @@ export function FurtherOptimizations() {
     <Stack ml="6rem">
       <Typography variant="h5" component="h2" marginBlock="2rem">
         Mögliche weitere Optimierungen
+        <span role="img" aria-label="Image Pedestrian">
+          🚶
+        </span>
       </Typography>
       <List>
         <ListItem>
