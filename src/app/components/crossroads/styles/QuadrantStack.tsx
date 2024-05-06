@@ -22,10 +22,10 @@ export const QuadrantStack = styled(Stack)`
   }
   &:nth-of-type(1):after {
     left: 0.5rem;
-    right: -1.5rem;
+    right: calc(-1.5rem + 0.1rem / 2);
   }
   &:nth-of-type(2):after {
-    left: -1.5rem;
+    left: calc(-1.5rem + 0.1rem / 2);
     right: 0.5rem;
   }
   &:nth-of-type(1):before,
@@ -45,10 +45,10 @@ export const QuadrantStack = styled(Stack)`
   }
   &:nth-of-type(1):before {
     top: 0.5rem;
-    bottom: -1.5rem;
+    bottom: calc(-1.5rem + 0.1rem / 2);
   }
   &:nth-of-type(3):before {
-    top: -1.5rem;
+    top: calc(-1.5rem + 0.1rem / 2);
     bottom: 0.5rem;
   }
 `;

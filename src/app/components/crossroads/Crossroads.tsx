@@ -45,6 +45,7 @@ function Crossroads() {
   const [running, setRunning] = useState(false);
   const [isPedestrian, setIsPedestrian] = useState(false);
   const [delayLightCar, setDelayLightCar] = useState(false);
+  const [isOtherGreen, setIsOtherGreen] = useState(false);
   const [state, dispatch] = useReducer(
     lightControlReducer,
     initSateTrafficLight
@@ -61,7 +62,8 @@ function Crossroads() {
         (isPedestrian && light === 'red') ||
         (delayLightCar &&
           ActionType === 'CHANGE_LIGHT_CAR_TWO' &&
-          light === 'red')
+          light === 'red') ||
+        (isOtherGreen && light === 'red-yellow')
       )
         return;
 
@@ -73,10 +75,17 @@ function Crossroads() {
       const nextColorDuration = trafficLightDuration[nextColor];
       timerId = window.setTimeout(setTimer, nextColorDuration);
     },
-    [delayLightCar, isPedestrian, running]
+    [delayLightCar, isOtherGreen, isPedestrian, running]
   );
 
-  // controls the delayed start of the traffic light after pedestrians
+  // synchronizes the two intervals
+  useEffect(() => {
+    state.lightCarOne === 'green' || state.lightCarTwo === 'green'
+      ? setIsOtherGreen(true)
+      : setIsOtherGreen(false);
+  }, [state.lightCarOne, state.lightCarTwo]);
+
+  // after the pedestrian light controls the start of the interval of the second traffic light
   useEffect(() => {
     isPedestrian && setDelayLightCar(true);
     !isPedestrian && state.lightCarOne === 'green' && setDelayLightCar(false);

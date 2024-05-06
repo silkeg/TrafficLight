@@ -29,18 +29,6 @@ export function FurtherOptimizations() {
             </span>
           </ListItemIcon>
           <ListItemText>
-            checken ob die Intervalle nicht mehr synchron laufen und damit
-            verhindert wird, dass eventuell beide Fahrzeugampeln zugleich grün
-            haben
-          </ListItemText>
-        </ListItem>
-        <ListItem>
-          <ListItemIcon>
-            <span role="img" aria-label="Image check">
-              →
-            </span>
-          </ListItemIcon>
-          <ListItemText>
             nach dem Grün der Fußgängerampel startet immer die Haupstraße mit
             dem Interval zum nächsten Grün, man könnt überlegen ob man das
             umstellt, sodaß immer die Ampel startet die zuerst rot hatte
