@@ -20,7 +20,7 @@ export function FurtherOptimizations() {
               →
             </span>
           </ListItemIcon>
-          <ListItemText>ein Debouncer in die Button einbauen</ListItemText>
+          <ListItemText>einen Debouncer in die Button einbauen</ListItemText>
         </ListItem>
         <ListItem>
           <ListItemIcon>
@@ -29,8 +29,9 @@ export function FurtherOptimizations() {
             </span>
           </ListItemIcon>
           <ListItemText>
-            einen Check ob die Intervalle nicht mehr synchron laufen und somit
-            verhinder das eventuell do beide Fahrzeugampeln zu gleich grün haben
+            checken ob die Intervalle nicht mehr synchron laufen und damit
+            verhindert wird, dass eventuell beide Fahrzeugampeln zugleich grün
+            haben
           </ListItemText>
         </ListItem>
         <ListItem>
@@ -40,9 +41,9 @@ export function FurtherOptimizations() {
             </span>
           </ListItemIcon>
           <ListItemText>
-            nach dem Grün der Fußgängerampel statet immer die Haupstraße mit dem
-            Interval zum nächsten grün, man könnt überlegen ob man das umstellt,
-            sodaß immer die Ampel startet die zuerst rot hatte
+            nach dem Grün der Fußgängerampel startet immer die Haupstraße mit
+            dem Interval zum nächsten Grün, man könnt überlegen ob man das
+            umstellt, sodaß immer die Ampel startet die zuerst rot hatte
           </ListItemText>
         </ListItem>
         <ListItem>
