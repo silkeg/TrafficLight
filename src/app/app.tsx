@@ -1,14 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import styles from './app.module.css';
-
-import NxWelcome from './nx-welcome';
+import Crossroads from './components/crossroads/Crossroads';
 
 export function App() {
-  return (
-    <div>
-      <NxWelcome title="traffic-light-app" />
-    </div>
-  );
+  return <Crossroads />;
 }
 
 export default App;
