@@ -5,10 +5,10 @@ import TrafficLight from '../trafficLight/TrafficLight';
 import { QuadrantStack } from './styles/QuadrantStack';
 import { useTimer } from '../../hooks/useTimer';
 import { PedestrianButton } from './styles/PedestrianButton';
-import { Task } from './Task';
+import { Task } from '../additional/Task';
 import { getNextColor } from '../../utilities/getNextColor';
 import { lightControlReducer } from '../../utilities/lightControlReducer';
-import { FurtherOptimizations } from './FurtherOptimizations';
+import { FurtherOptimizations } from '../additional/FurtherOptimizations';
 
 export interface StateInterface {
   lightCarOne: LightType;
