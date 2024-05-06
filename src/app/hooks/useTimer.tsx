@@ -4,8 +4,9 @@ import {
   LightType,
   TimerSettings,
   trafficLightDuration,
-  trafficLightTransitionPeriod,
 } from '../components/crossroads/Crossroads';
+
+const trafficLightTransitionPeriod = 1000;
 
 type HookTimerSettings = (
   actionType: ActionType,

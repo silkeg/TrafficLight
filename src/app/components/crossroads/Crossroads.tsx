@@ -33,7 +33,6 @@ const initSateTrafficLight: StateInterface = {
   lightPedestrian: 'red',
 };
 export const trafficLightOrder = ['red', 'red-yellow', 'green', 'yellow'];
-export const trafficLightTransitionPeriod = 1000;
 export const trafficLightDuration = {
   red: 2000,
   'red-yellow': 2000,
