@@ -32,16 +32,7 @@ const initSateTrafficLight: StateInterface = {
   lightCarTwo: 'red',
   lightPedestrian: 'red',
 };
-export const trafficLightOrder = [
-  'red',
-  'transitionPeriodRY',
-  'red-yellow',
-  'transitionPeriodG',
-  'green',
-  'transitionPeriodY',
-  'yellow',
-  'transitionPeriodYR',
-];
+
 export const trafficLightDuration = {
   red: 2000,
   'red-yellow': 2000,
@@ -81,7 +72,9 @@ function Crossroads() {
         type: ActionType,
         stateLight: nextColor,
       });
-      const nextColorDuration = trafficLightDuration[nextColor];
+      const nextColorDuration = nextColor.includes('transitionPeriod')
+        ? trafficLightDuration.transitionPeriod
+        : trafficLightDuration[nextColor];
       timerId = window.setTimeout(setTimer, nextColorDuration);
     },
     [delayLightCar, isOtherGreen, isPedestrian, running]

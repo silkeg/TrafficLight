@@ -1,9 +1,16 @@
-import {
-  LightType,
-  trafficLightOrder,
-} from '../components/crossroads/Crossroads';
+import { LightType } from '../components/crossroads/Crossroads';
 
 type NextColorSettings = (currentColor: LightType) => LightType;
+const trafficLightOrder = [
+  'red',
+  'transitionPeriodRY',
+  'red-yellow',
+  'transitionPeriodG',
+  'green',
+  'transitionPeriodY',
+  'yellow',
+  'transitionPeriodR',
+];
 
 // determines which is the next color
 export const getNextColor: NextColorSettings = (currentColor) => {
