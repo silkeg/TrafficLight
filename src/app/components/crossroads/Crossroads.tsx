@@ -32,12 +32,22 @@ const initSateTrafficLight: StateInterface = {
   lightCarTwo: 'red',
   lightPedestrian: 'red',
 };
-export const trafficLightOrder = ['red', 'red-yellow', 'green', 'yellow'];
+export const trafficLightOrder = [
+  'red',
+  'transitionPeriodRY',
+  'red-yellow',
+  'transitionPeriodG',
+  'green',
+  'transitionPeriodY',
+  'yellow',
+  'transitionPeriodYR',
+];
 export const trafficLightDuration = {
   red: 2000,
   'red-yellow': 2000,
   green: 5000,
   yellow: 1000,
+  transitionPeriod: 1000,
 };
 
 function Crossroads() {
@@ -120,7 +130,7 @@ function Crossroads() {
     const timerIdPedestrian = setTimeout(() => {
       dispatch({ type: 'CHANGE_LIGHT_PEDESTRIAN', stateLight: 'red' });
       setIsPedestrian(false);
-    }, trafficLightDuration[state.lightPedestrian]);
+    }, trafficLightDuration[state.lightPedestrian] + trafficLightDuration.transitionPeriod);
 
     return () => clearTimeout(timerIdPedestrian);
   }, [

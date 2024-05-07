@@ -6,8 +6,6 @@ import {
   trafficLightDuration,
 } from '../components/crossroads/Crossroads';
 
-const trafficLightTransitionPeriod = 1000;
-
 type HookTimerSettings = (
   actionType: ActionType,
   timerIdRef: MutableRefObject<number | null>,
@@ -27,7 +25,7 @@ export const useTimer: HookTimerSettings = (
 
     timerId = window.setTimeout(
       () => setTimer(actionType, light, timerId),
-      trafficLightDuration[light] + trafficLightTransitionPeriod
+      trafficLightDuration[light]
     );
 
     return () => {
