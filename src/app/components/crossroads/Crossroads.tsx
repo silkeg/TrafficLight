@@ -59,6 +59,7 @@ function Crossroads() {
     (ActionType, light, timerId) => {
       if (
         !running ||
+        !light ||
         (isPedestrian && light === 'red') ||
         (delayLightCar &&
           ActionType === 'CHANGE_LIGHT_CAR_TWO' &&
