@@ -21,11 +21,7 @@ export type ActionType =
   | 'CHANGE_LIGHT_CAR_TWO'
   | 'CHANGE_LIGHT_PEDESTRIAN';
 
-export type TimerSettings = (
-  ActionType: ActionType,
-  light: LightType,
-  timerId: number | null
-) => void;
+export type TimerSettings = (ActionType: ActionType, light: LightType) => void;
 
 const initSateTrafficLight: StateInterface = {
   lightCarOne: 'green',
@@ -56,10 +52,9 @@ function Crossroads() {
 
   // controls the traffic lights
   const setTimer: TimerSettings = useCallback(
-    (ActionType, light, timerId) => {
+    (ActionType, light) => {
       if (
         !running ||
-        !light ||
         (isPedestrian && light === 'red') ||
         (delayLightCar &&
           ActionType === 'CHANGE_LIGHT_CAR_TWO' &&
@@ -73,10 +68,6 @@ function Crossroads() {
         type: ActionType,
         stateLight: nextColor,
       });
-      const nextColorDuration = nextColor.includes('transitionPeriod')
-        ? trafficLightDuration.transitionPeriod
-        : trafficLightDuration[nextColor];
-      timerId = window.setTimeout(setTimer, nextColorDuration);
     },
     [delayLightCar, isOtherGreen, isPedestrian, running]
   );

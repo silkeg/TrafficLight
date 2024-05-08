@@ -24,7 +24,7 @@ export const useTimer: HookTimerSettings = (
     let timerId = timerIdRef.current;
 
     timerId = window.setTimeout(
-      () => setTimer(actionType, light, timerId),
+      () => setTimer(actionType, light),
       trafficLightDuration[light]
     );
 
