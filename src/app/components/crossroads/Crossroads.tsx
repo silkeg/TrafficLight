@@ -54,11 +54,15 @@ function Crossroads() {
   const setTimer: TimerSettings = useCallback(
     (ActionType, light) => {
       if (
+        // start/stop Button
         !running ||
+        // as long as both traffic lights are not red, the intervals continue to run
         (isPedestrian && light === 'red') ||
+        // delayed start of the second traffic light after the pedestrian light has ended
         (delayLightCar &&
           ActionType === 'CHANGE_LIGHT_CAR_TWO' &&
           light === 'red') ||
+        // checks that both traffic lights cannot turn green
         (isOtherGreen && light === 'red-yellow')
       )
         return;
