@@ -1,228 +1,157 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import TrafficLight from '../trafficLight/TrafficLight';
 import { QuadrantStack } from './styles/QuadrantStack';
 import { useTimer } from '../../hooks/useTimer';
 import { PedestrianButton } from './styles/PedestrianButton';
-import { Task } from '../additional/Task';
-import { getNextColor } from '../../utilities/getNextColor';
-import { lightControlReducer } from '../../utilities/lightControlReducer';
-import { FurtherOptimizations } from '../additional/FurtherOptimizations';
-
-export interface StateInterface {
-  lightCarOne: LightType;
-  lightCarTwo: LightType;
-  lightPedestrian: LightType;
-}
-export type LightType = 'green' | 'yellow' | 'red' | 'red-yellow';
-export type ActionType =
-  | 'CHANGE_LIGHT_CAR_ONE'
-  | 'CHANGE_LIGHT_CAR_TWO'
-  | 'CHANGE_LIGHT_PEDESTRIAN';
-
-export type TimerSettings = (ActionType: ActionType, light: LightType) => void;
-
-const initSateTrafficLight: StateInterface = {
-  lightCarOne: 'green',
-  lightCarTwo: 'red',
-  lightPedestrian: 'red',
-};
-
-export const trafficLightDuration = {
-  red: 2000,
-  'red-yellow': 2000,
-  green: 5000,
-  yellow: 1000,
-  transitionPeriod: 1000,
-};
 
 function Crossroads() {
   const [running, setRunning] = useState(false);
   const [isPedestrian, setIsPedestrian] = useState(false);
-  const [delayLightCar, setDelayLightCar] = useState(false);
-  const [isOtherGreen, setIsOtherGreen] = useState(false);
-  const [state, dispatch] = useReducer(
-    lightControlReducer,
-    initSateTrafficLight
-  );
+  const [isPedestrianButton, setIsPedestrianButton] = useState(false);
+  const [isTrafficLightOne, setIsTrafficLightOne] = useState(false);
+  const [isTrafficLightTwo, setIsTrafficLightTwo] = useState(false);
 
   const timerIdCarOneRef = useRef<number | null>(null);
   const timerIdCarTwoRef = useRef<number | null>(null);
+  const timerIdPedestrianRef = useRef<number | null>(null);
 
-  // controls the traffic lights
-  const setTimer: TimerSettings = useCallback(
-    (ActionType, light) => {
-      if (
-        // start/stop Button
-        !running ||
-        // as long as both traffic lights are not red, the intervals continue to run
-        (isPedestrian && light === 'red') ||
-        // delayed start of the second traffic light after the pedestrian light has ended
-        (delayLightCar &&
-          ActionType === 'CHANGE_LIGHT_CAR_TWO' &&
-          light === 'red') ||
-        // checks that both traffic lights cannot turn green
-        (isOtherGreen && light === 'red-yellow')
-      )
-        return;
-
-      const nextColor = getNextColor(light);
-      dispatch({
-        type: ActionType,
-        stateLight: nextColor,
-      });
-    },
-    [delayLightCar, isOtherGreen, isPedestrian, running]
-  );
-
-  // synchronizes the two intervals
-  useEffect(() => {
-    state.lightCarOne === 'green' || state.lightCarTwo === 'green'
-      ? setIsOtherGreen(true)
-      : setIsOtherGreen(false);
-  }, [state.lightCarOne, state.lightCarTwo]);
-
-  // after the pedestrian light controls the start of the interval of the second traffic light
-  useEffect(() => {
-    isPedestrian && setDelayLightCar(true);
-    !isPedestrian && state.lightCarOne === 'green' && setDelayLightCar(false);
-  }, [isPedestrian, state.lightCarOne]);
-
-  // starts the interval for traffic light 1
-  useTimer(
-    'CHANGE_LIGHT_CAR_ONE',
+  // init traffic light 1
+  const [stateCarLightOne] = useTimer(
+    'CHANGE_LIGHT_CAR',
     timerIdCarOneRef,
-    state.lightCarOne,
-    setTimer
+    isTrafficLightOne,
+    running,
+    'green'
   );
 
-  // starts the interval for traffic light 2
-  useTimer(
-    'CHANGE_LIGHT_CAR_TWO',
+  // init traffic light 2
+  const [stateCarLightTwo] = useTimer(
+    'CHANGE_LIGHT_CAR',
     timerIdCarTwoRef,
-    state.lightCarTwo,
-    setTimer
+    isTrafficLightTwo,
+    running
   );
 
-  // controls the pedestrian lights
+  // init PedestianLight
+  const [statePedestrian] = useTimer(
+    'CHANGE_LIGHT_PEDESTRIAN',
+    timerIdPedestrianRef,
+    isPedestrian,
+    running
+  );
+
+  // controls the light
   useEffect(() => {
-    if (!running) return;
-    if (!isPedestrian) return;
-    if (state.lightCarOne !== 'red') return;
-    if (state.lightCarTwo !== 'red') return;
+    isPedestrianButton && stateCarLightOne.light === 'red'
+      ? setIsTrafficLightOne(false)
+      : statePedestrian.light === 'red' && setIsTrafficLightOne(true);
 
-    dispatch({
-      type: 'CHANGE_LIGHT_PEDESTRIAN',
-      stateLight: 'green',
-    });
-    const timerIdPedestrian = setTimeout(() => {
-      dispatch({ type: 'CHANGE_LIGHT_PEDESTRIAN', stateLight: 'red' });
-      setIsPedestrian(false);
-    }, trafficLightDuration[state.lightPedestrian] + trafficLightDuration.transitionPeriod);
+    isPedestrianButton && stateCarLightTwo.light === 'red'
+      ? setIsTrafficLightTwo(false)
+      : stateCarLightOne.light === 'green' && setIsTrafficLightTwo(true);
 
-    return () => clearTimeout(timerIdPedestrian);
+    !isTrafficLightOne && !isTrafficLightTwo
+      ? setIsPedestrian(true)
+      : setIsPedestrian(false);
+
+    statePedestrian.light === 'green' && setIsPedestrianButton(false);
   }, [
     isPedestrian,
-    running,
-    state.lightCarOne,
-    state.lightCarTwo,
-    state.lightPedestrian,
+    isPedestrianButton,
+    isTrafficLightOne,
+    isTrafficLightTwo,
+    stateCarLightOne.light,
+    stateCarLightTwo.light,
+    statePedestrian.light,
   ]);
 
   return (
-    <>
-      <Stack bgcolor={grey[200]}>
-        <Typography
-          variant="h4"
-          component="h1"
-          textAlign="center"
-          marginBlock="2rem"
+    <Stack bgcolor={grey[200]}>
+      <Typography
+        variant="h4"
+        component="h1"
+        textAlign="center"
+        marginBlock="2rem"
+      >
+        Traffic Lights Demo
+      </Typography>
+      <Box>
+        <Button
+          onClick={() => setRunning(!running)}
+          variant="contained"
+          size="small"
+          sx={{ marginLeft: '6rem' }}
         >
-          Traffic Lights Demo
-        </Typography>
-        <Box>
-          <Button
-            onClick={() => setRunning(!running)}
-            variant="contained"
-            size="small"
-            sx={{ marginLeft: '6rem' }}
-          >
-            {running ? 'Stop' : 'Start'}
-          </Button>
-        </Box>
-        <Stack
-          m="0.5rem"
-          minWidth="30rem"
-          minHeight="30rem"
-          direction="row"
-          flexWrap="wrap"
+          {running ? 'Stop' : 'Start'}
+        </Button>
+      </Box>
+      <Stack
+        m="0.5rem"
+        minWidth="30rem"
+        minHeight="30rem"
+        direction="row"
+        flexWrap="wrap"
+      >
+        <QuadrantStack
+          alignItems="end"
+          justifyContent="end"
+          p="2rem"
+          sx={{ borderWidth: '0 2rem 2rem 0' }}
         >
-          <QuadrantStack
-            alignItems="end"
-            justifyContent="end"
-            p="2rem"
-            sx={{ borderWidth: '0 2rem 2rem 0' }}
-          >
-            <TrafficLight rotate={true} lightOn={state.lightCarOne} />
-          </QuadrantStack>
+          <TrafficLight rotate={true} lightOn={stateCarLightOne.light} />
+        </QuadrantStack>
 
-          <QuadrantStack
-            pr="10%"
-            justifyContent="end"
-            alignItems="end"
-            sx={{ borderWidth: '0 0 2rem 2rem' }}
+        <QuadrantStack
+          pr="10%"
+          justifyContent="end"
+          alignItems="end"
+          sx={{ borderWidth: '0 0 2rem 2rem' }}
+        >
+          <Stack
+            alignItems="center"
+            mb="-4.15rem"
+            direction="column"
+            gap="1rem"
           >
-            <Stack
-              alignItems="center"
-              mb="-4.15rem"
-              direction="column"
-              gap="1rem"
+            <TrafficLight lightAmount={2} lightOn={statePedestrian.light} />
+            <PedestrianButton
+              aria-label="Fußgängerüberwegbutton"
+              onClick={() => {
+                running && setIsPedestrianButton(true);
+              }}
+              className={isPedestrianButton ? 'blinking' : ''}
             >
-              <TrafficLight lightAmount={2} lightOn={state.lightPedestrian} />
-              <PedestrianButton
-                aria-label="Fußgängerüberwegbutton"
-                onClick={() => {
-                  running && setIsPedestrian(!isPedestrian);
-                }}
-                className={
-                  isPedestrian && state.lightPedestrian === 'red'
-                    ? 'blinking'
-                    : ''
-                }
-              >
-                <span role="img" aria-label="Image Button">
-                  ⦿
-                </span>
-              </PedestrianButton>
-              <Box
-                position="relative"
-                zIndex="2"
-                width="8rem"
-                height="4rem"
-                sx={{
-                  border: '0.1rem solid white',
-                  background: `repeating-linear-gradient( to bottom, white, white 0.5rem, ${grey[500]} 0.5rem, ${grey[500]} 1.2rem)`,
-                }}
-              ></Box>
-            </Stack>
-          </QuadrantStack>
+              <span role="img" aria-label="Image Button">
+                ⦿
+              </span>
+            </PedestrianButton>
+            <Box
+              position="relative"
+              zIndex="2"
+              width="8rem"
+              height="4rem"
+              sx={{
+                border: '0.1rem solid white',
+                background: `repeating-linear-gradient( to bottom, white, white 0.5rem, ${grey[500]} 0.5rem, ${grey[500]} 1.2rem)`,
+              }}
+            ></Box>
+          </Stack>
+        </QuadrantStack>
 
-          <QuadrantStack sx={{ borderWidth: '2rem 2rem 0 0;' }}></QuadrantStack>
+        <QuadrantStack sx={{ borderWidth: '2rem 2rem 0 0;' }}></QuadrantStack>
 
-          <QuadrantStack
-            alignItems="start"
-            justifyContent="start"
-            p="2rem"
-            sx={{ borderWidth: '2rem 0 0 2rem' }}
-          >
-            <TrafficLight lightOn={state.lightCarTwo} />
-          </QuadrantStack>
-        </Stack>
+        <QuadrantStack
+          alignItems="start"
+          justifyContent="start"
+          p="2rem"
+          sx={{ borderWidth: '2rem 0 0 2rem' }}
+        >
+          <TrafficLight lightOn={stateCarLightTwo.light} />
+        </QuadrantStack>
       </Stack>
-      <FurtherOptimizations />
-      <Task />
-    </>
+    </Stack>
   );
 }
 

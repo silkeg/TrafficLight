@@ -1,15 +1,19 @@
-import { LightType, StateInterface } from '../components/crossroads/Crossroads';
+import { getNextColor, getNextColorPedestian } from './getNextColor';
 
+export type LightType = 'green' | 'yellow' | 'red' | 'red-yellow';
+export type LightPedestianType = 'green' | 'red';
+
+export interface StateInterface {
+  light: LightType | LightPedestianType;
+}
+
+export type ActionType = 'CHANGE_LIGHT_CAR' | 'CHANGE_LIGHT_PEDESTRIAN';
 type ReducerActionType =
   | {
-      type: 'CHANGE_LIGHT_CAR_ONE';
-      stateLight: LightType;
+      type: 'CHANGE_LIGHT_CAR';
+      light: LightType;
     }
-  | {
-      type: 'CHANGE_LIGHT_CAR_TWO';
-      stateLight: LightType;
-    }
-  | { type: 'CHANGE_LIGHT_PEDESTRIAN'; stateLight: LightType };
+  | { type: 'CHANGE_LIGHT_PEDESTRIAN'; light: LightPedestianType };
 
 type lightControlReducerSettings = (
   state: StateInterface,
@@ -21,12 +25,13 @@ export const lightControlReducer: lightControlReducerSettings = (
   action
 ) => {
   switch (action.type) {
-    case 'CHANGE_LIGHT_CAR_ONE':
-      return { ...state, lightCarOne: action.stateLight };
-    case 'CHANGE_LIGHT_CAR_TWO':
-      return { ...state, lightCarTwo: action.stateLight };
+    case 'CHANGE_LIGHT_CAR':
+      return { ...state, light: getNextColor(action.light) };
     case 'CHANGE_LIGHT_PEDESTRIAN':
-      return { ...state, lightPedestrian: action.stateLight };
+      return {
+        ...state,
+        light: getNextColorPedestian(action.light),
+      };
     default:
       return state;
   }

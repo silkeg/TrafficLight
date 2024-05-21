@@ -1,35 +1,62 @@
-import { MutableRefObject, useEffect } from 'react';
+import { MutableRefObject, useEffect, useReducer } from 'react';
 import {
   ActionType,
+  LightPedestianType,
   LightType,
-  TimerSettings,
-  trafficLightDuration,
-} from '../components/crossroads/Crossroads';
+  StateInterface,
+  lightControlReducer,
+} from '../utilities/lightControlReducer';
+
+export const trafficLightDuration = {
+  red: 2000,
+  'red-yellow': 2000,
+  green: 5000,
+  yellow: 1000,
+  transitionPeriod: 1000,
+};
 
 type HookTimerSettings = (
   actionType: ActionType,
   timerIdRef: MutableRefObject<number | null>,
-  light: LightType,
-  setTimer: TimerSettings
-) => void;
+  isTrafficLight: boolean,
+  running: boolean,
+  initColor?: 'red' | 'green'
+) => StateInterface[];
 
 // controls the timers for the individual traffic light phases
 export const useTimer: HookTimerSettings = (
   actionType,
   timerIdRef,
-  light,
-  setTimer
+  isTrafficLight,
+  running,
+  initColor = 'red'
 ) => {
+  const [state, dispatch] = useReducer(lightControlReducer, {
+    light: initColor,
+  });
   useEffect(() => {
+    if (!isTrafficLight || !running) return;
+
     let timerId = timerIdRef.current;
 
-    timerId = window.setTimeout(
-      () => setTimer(actionType, light),
-      trafficLightDuration[light]
-    );
+    timerId = window.setTimeout(() => {
+      if (actionType === 'CHANGE_LIGHT_CAR') {
+        dispatch({
+          type: actionType,
+          light: state.light as LightType,
+        });
+      }
+      if (actionType === 'CHANGE_LIGHT_PEDESTRIAN') {
+        dispatch({
+          type: actionType,
+          light: state.light as LightPedestianType,
+        });
+      }
+    }, trafficLightDuration[state.light] + trafficLightDuration.transitionPeriod);
 
     return () => {
       timerId !== null && clearTimeout(timerId);
     };
-  }, [light, setTimer, timerIdRef, actionType]);
+  }, [timerIdRef, actionType, state.light, isTrafficLight, state, running]);
+  return [state];
 };
