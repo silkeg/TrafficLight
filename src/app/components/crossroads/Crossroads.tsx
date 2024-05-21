@@ -44,27 +44,26 @@ function Crossroads() {
 
   // controls the light
   useEffect(() => {
-    isPedestrianButton && stateCarLightOne.light === 'red'
+    isPedestrianButton && stateCarLightOne.lightCar === 'red'
       ? setIsTrafficLightOne(false)
-      : statePedestrian.light === 'red' && setIsTrafficLightOne(true);
+      : statePedestrian.lightPedestian === 'red' && setIsTrafficLightOne(true);
 
-    isPedestrianButton && stateCarLightTwo.light === 'red'
+    isPedestrianButton && stateCarLightTwo.lightCar === 'red'
       ? setIsTrafficLightTwo(false)
-      : stateCarLightOne.light === 'green' && setIsTrafficLightTwo(true);
+      : stateCarLightOne.lightCar === 'green' && setIsTrafficLightTwo(true);
 
     !isTrafficLightOne && !isTrafficLightTwo
       ? setIsPedestrian(true)
       : setIsPedestrian(false);
 
-    statePedestrian.light === 'green' && setIsPedestrianButton(false);
+    statePedestrian.lightPedestian === 'green' && setIsPedestrianButton(false);
   }, [
-    isPedestrian,
     isPedestrianButton,
     isTrafficLightOne,
     isTrafficLightTwo,
-    stateCarLightOne.light,
-    stateCarLightTwo.light,
-    statePedestrian.light,
+    stateCarLightOne.lightCar,
+    stateCarLightTwo.lightCar,
+    statePedestrian.lightPedestian,
   ]);
 
   return (
@@ -100,7 +99,7 @@ function Crossroads() {
           p="2rem"
           sx={{ borderWidth: '0 2rem 2rem 0' }}
         >
-          <TrafficLight rotate={true} lightOn={stateCarLightOne.light} />
+          <TrafficLight rotate={true} lightOn={stateCarLightOne.lightCar} />
         </QuadrantStack>
 
         <QuadrantStack
@@ -115,7 +114,10 @@ function Crossroads() {
             direction="column"
             gap="1rem"
           >
-            <TrafficLight lightAmount={2} lightOn={statePedestrian.light} />
+            <TrafficLight
+              lightAmount={2}
+              lightOn={statePedestrian.lightPedestian}
+            />
             <PedestrianButton
               aria-label="Fußgängerüberwegbutton"
               onClick={() => {
@@ -148,7 +150,7 @@ function Crossroads() {
           p="2rem"
           sx={{ borderWidth: '2rem 0 0 2rem' }}
         >
-          <TrafficLight lightOn={stateCarLightTwo.light} />
+          <TrafficLight lightOn={stateCarLightTwo.lightCar} />
         </QuadrantStack>
       </Stack>
     </Stack>

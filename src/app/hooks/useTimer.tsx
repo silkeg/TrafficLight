@@ -32,7 +32,8 @@ export const useTimer: HookTimerSettings = (
   initColor = 'red'
 ) => {
   const [state, dispatch] = useReducer(lightControlReducer, {
-    light: initColor,
+    lightCar: initColor,
+    lightPedestian: initColor,
   });
   useEffect(() => {
     if (!isTrafficLight || !running) return;
@@ -43,20 +44,27 @@ export const useTimer: HookTimerSettings = (
       if (actionType === 'CHANGE_LIGHT_CAR') {
         dispatch({
           type: actionType,
-          light: state.light as LightType,
+          lightCar: state.lightCar as LightType,
         });
       }
       if (actionType === 'CHANGE_LIGHT_PEDESTRIAN') {
         dispatch({
           type: actionType,
-          light: state.light as LightPedestianType,
+          lightPedestian: state.lightPedestian as LightPedestianType,
         });
       }
-    }, trafficLightDuration[state.light] + trafficLightDuration.transitionPeriod);
+    }, trafficLightDuration[actionType === 'CHANGE_LIGHT_CAR' ? state.lightCar : state.lightPedestian] + trafficLightDuration.transitionPeriod);
 
     return () => {
       timerId !== null && clearTimeout(timerId);
     };
-  }, [timerIdRef, actionType, state.light, isTrafficLight, state, running]);
+  }, [
+    actionType,
+    isTrafficLight,
+    running,
+    state.lightCar,
+    state.lightPedestian,
+    timerIdRef,
+  ]);
   return [state];
 };
